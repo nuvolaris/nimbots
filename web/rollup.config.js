@@ -6,10 +6,6 @@ import { terser } from 'rollup-plugin-terser';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
-//import json from 'rollup-plugin-json';
-//import globals from 'rollup-plugin-node-globals'
-//import builtins from 'rollup-plugin-node-builtins';
-//import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -40,14 +36,9 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		//file: 'public/build/bundle.js'
-		dir: 'public/build'
+		dir: 'public/api/v1/web/nuvolaris/default/faaswars/build'
 	},
 	plugins: [
-		//nodePolyfills(),
-		//globals(),
-		//builtins(),
-		//json(),
 		postcss(),
 		svelte({
 			// enable run-time checks when not in production

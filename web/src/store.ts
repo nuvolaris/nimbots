@@ -6,4 +6,6 @@ export const source = writable("")
 
 export const submitting = writable("")
 
-export const board = writable({show: false, round: ""})
+export const rewards = writable(0)
+
+export const share = writable("")

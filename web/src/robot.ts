@@ -110,7 +110,8 @@ export class Robot {
   me: Info
   data: object = {}
   id: number = 0
-  hp: number = HP
+  hp: number = 0
+  hp_total: number = 0
   name: string
 
   tank_angle: number = 0
@@ -146,7 +147,7 @@ export class Robot {
   hit_robot: (x: number, y: number) => void
   inspect: (id: number, counter: number, request: string, response: string) => void = function () { }
 
-  constructor(x: number, y: number, url: string,
+  constructor(x: number, y: number, url: string, extra: number,
     completed_request: (msg: string, ok: boolean) => void,
     hit_robot: (x: number, y: number) => void) {
     this.x = x
@@ -155,6 +156,8 @@ export class Robot {
     this.completed_request = completed_request
     this.hit_robot = hit_robot
     this.name = url.split("/").pop()
+    this.hp_total = HP + extra
+    this.hp = this.hp_total
   }
 
   init(enemies: Robot[], tank_angle: number, turret_angle: number) {

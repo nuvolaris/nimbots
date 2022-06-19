@@ -36,6 +36,7 @@ export function rumbleSubmit(namespace: string, data: string): Promise<boolean> 
 interface Enemy {
     name: string
     url: string
+    rewards: number
 }
 
 export async function rumblePublic(): Promise<Enemy[]> {

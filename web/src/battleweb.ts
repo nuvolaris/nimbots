@@ -55,9 +55,9 @@ export class BattleWeb extends Battle {
         Assets.loadAll(() => { })
     }
 
-    webinit(ctx: CanvasRenderingContext2D, url: string[], startAngles: number[][]) {
+    webinit(ctx: CanvasRenderingContext2D, url: string[], startAngles: number[][], extra: number[]) {
         this.ctx = ctx
-        this.init(url, startAngles, -1)
+        this.init(url, startAngles, -1, extra)
         for (let r of Battle.robots)
             r.inspect = inspect
     }
@@ -93,13 +93,14 @@ export class BattleWeb extends Battle {
             }
             if ((this.height - robot.y) < 100)
                 textY = - textY
-            let text = `${robot.hp}/${HP}`
+            let text = `${robot.hp}/${robot.hp_total}`
             // check yelling
             if (robot.is_yell && (robot.yell_ts < YELL_TIMEOUT)) {
                 this.ctx.font = "18px Verdana"
                 text = robot.yell_msg
                 robot.yell_ts++
             } else {
+                this.ctx.font = "14px Courier"
                 robot.yell_ts = 0
                 robot.is_yell = false
             }

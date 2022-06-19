@@ -5,31 +5,19 @@
 
   import Field from "./Field.svelte";
   import Editor from "./Editor.svelte";
-  import Board from "./Board.svelte";
-
-  import { source, board } from "./store";
   import { OpenWhisk } from "./openwhisk";
-
+  
+  import { source, rewards, share } from "./store";
   // decode login
   let url = new URL(location.href);
   let ow: OpenWhisk = undefined;
 
-  if(url.hash.length >1) {
-    console.log(url.hash)
-    localStorage.setItem("referrer", url.hash.substring(1))
-    url.hash = ""
-    location.href = url.href
-  }
 
-  if (url.search.startsWith("?token=")) {
-    let parsed = JSON.parse(atob(url.search.substring(7)));
-    ow = new OpenWhisk(
-      parsed["apihost"],
-      parsed["uuid"] + ":" + parsed["key"],
-      parsed["namespace"]
-    );
-    window["ow"] = ow;
-    console.log("logged on", ow.namespace);
+  if (url.hash.length > 1) {
+    console.log(url.hash);
+    localStorage.setItem("referrer", url.hash.substring(1));
+    url.hash = "";
+    location.href = url.href;
   }
 
   // calculate api server location
@@ -38,10 +26,8 @@
   let base = "https://" + apiserver + path;
 </script>
 
-{#if $board.show}
-  <Board/>
-{:else if $source == ''}
+{#if $source == ""}
   <Field {base} {ow} />
 {:else}
-  <Editor {ow} />
+  <Editor {ow} />`
 {/if}

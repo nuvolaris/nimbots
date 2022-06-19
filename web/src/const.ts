@@ -10,12 +10,16 @@ if(location.hostname == "localhost") {
     debug=true
 }
 
-export const VERSION = "1.0"
+export const VERSION = "1.3"
+export const URL_PUBLIC = `https://apigcp.nimbella.io/api/v1/web/nimbots/rumble/public`
+export const URL_REWARD = `https://nimbots-apigcp.nimbella.io/api/shared/reward`
+export const URL_ECHO = `https://nimbots-apigcp.nimbella.io/api/shared/echo`
 export const URL_LOGIN = `https://apigcp.nimbella.io/api/v1/web/nimbella/user/login?provider=&redirect=${redirect}`
 export const URL_REGISTER = `https://apigcp.nimbella.io/api/v1/web/${namespace}/rumble/register`
 export const URL_SUBMIT = `https://apigcp.nimbella.io/api/v1/web/${namespace}/rumble/submit`
-export const URL_PUBLIC = `https://apigcp.nimbella.io/api/v1/web/${namespace}/rumble/public`
 export const URL_STATUS = `https://apigcp.nimbella.io/api/v1/web/${namespace}/rumble/status`
+export const URL_ENTER = `https://nimbots-apigcp.nimbella.io`
+
 export const DEBUG = debug;
 
 if(DEBUG) {

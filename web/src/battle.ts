@@ -41,7 +41,7 @@ export class Battle {
     Battle.battle = this
   }
 
-  init(urls: string[], startAngles: number[][], duration: number) {
+  init(urls: string[], startAngles: number[][], duration: number, extra: number[]) {
     this.duration = duration
     this.title = urls[0].split("/").pop() + " vs " + urls[1].split("/").pop()
     // calculate appearing position
@@ -51,7 +51,7 @@ export class Battle {
     let id = 0
     Battle.robots = []
     for (let url of urls) {
-      let r = new Robot(robotAppearPosX, robotAppearPosY, url,
+      let r = new Robot(robotAppearPosX, robotAppearPosY, url, extra[id],
         (msg: string, ok: boolean) => { this.completed_request(msg, ok) },
         (x: number, y: number) => { this.hit_robot(x, y) })
       r.id = id++

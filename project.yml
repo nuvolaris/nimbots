@@ -1,8 +1,0 @@
-bucket:
-  strip: 1
-packages:
-  - name: default
-    actions:
-      - name: GoBot
-        web: true
-        runtime: go:1.12

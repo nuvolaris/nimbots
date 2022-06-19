@@ -1,0 +1,29 @@
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars
+  "error": "not deployed with -a provide-api-key true "
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars
+  "error": "not deployed with -p secret <password>"
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars
+<script>location.href += "/index.html"</script>
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/login
+{
+  "error": "wrong password"
+}
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/login?password=pippo
+{
+  "error": "wrong password"
+}
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/login?password=pippo&secret=pippo
+  "error": "Request defines parameters that are not allowed (e.g., reserved properties)."
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/login?password=s3cr3t
+  "*****": "********-****-****-****-************:****************************************************************"
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars
+<script>location.href += "/index.html"</script>
+>>> -v http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/index.html
+< Content-Type: text/html; charset=UTF-8
+>>> -v http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/favicon.ico
+< Content-Type: image/vnd.microsoft.icon
+>>> http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/favicon.ico
+out.tmp: MS Windows icon resource - 4 icons, 64x64, 32 bits/pixel, 32x32, 32 bits/pixel
+>>> -v http://localhost:3233/api/v1/web/nuvolaris/default/faaswars/nothing
+< Content-Type: text/html; charset=UTF-8
+<h1> 504 not found</h1>* Closing connection 0

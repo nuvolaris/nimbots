@@ -1,23 +1,20 @@
 <script lang="ts">
   import fetch from "cross-fetch";
-  import type { OpenWhisk } from "./openwhisk";
+  import { OpenWhisk } from "./openwhisk";
   import { URL_LOGIN, VERSION } from "./const";
   import { BattleWeb } from "./battleweb";
   import { AssetsLoader } from "./util";
   import { onMount, afterUpdate, onDestroy } from "svelte";
-  import { inspector, source, submitting, board } from "./store";
+  import { inspector, source, submitting, rewards } from "./store";
   import { log } from "./robot";
   import { rumblePublic } from "./rumble";
   import Submit from "./Submit.svelte";
-  import Share from "./Share.svelte";
-  import type { Battle } from "./battle";
 
   export let base: string;
   export let ow: OpenWhisk;
 
   let battle: BattleWeb;
-  let msg =
-    ow === undefined ? "in a galaxy far far away..." : "Choose opponents";
+  let msg = ow === undefined ? "" : "Choose opponents";
   let status = "Select Opponents";
 
   let ready = false;
@@ -36,9 +33,15 @@
 
   let myBots: string[] = [];
 
-  let enemyBots: { name: string; url: string }[] = [];
+  let enemyBots: { name: string; url: string; rewards: number }[] = [];
   let cyanBots = enemyBots;
   let redBots = enemyBots;
+  let searchCyanBot = "";
+  let searchRedBot = "";
+  let filteredCyanBots = cyanBots;
+  let filteredMyBots = myBots;
+  let filteredRedBots = redBots;
+  let canStartBattle = true;
 
   let robotMap = {
     js: "/src/JsBot.js",
@@ -46,6 +49,33 @@
     py: "/src/PyBot.py",
   };
   let regex = /^\w{1,60}$/g;
+
+  function login() {
+    let url = new URL(location.href);
+    let path = url.pathname.split("/");
+    path[path.length - 1] = "login";
+    url.pathname = path.join("/");
+    url.port = "3233";
+    fetch(url.href, {
+      method: "POST",
+      body: JSON.stringify({
+        password: prompt("Password:"),
+      }),
+    })
+      .then((r) => r.json())
+      .then((r) => {
+        if ("error" in r) {
+          alert(r.error);
+        } else {
+          ow = new OpenWhisk("http://localhost:3233", r["token"], "nuvolaris");
+          window["ow"] = ow;
+        }
+      })
+      .catch((ex) => {
+        console.log(ex);
+        alert("Unexpected error - check logs");
+      });
+  }
 
   async function create(): Promise<boolean> {
     if (!robotName.match(regex)) {
@@ -76,17 +106,42 @@
 
   async function updateBots() {
     enemyBots = await rumblePublic();
+    for (let i = 0; i < enemyBots.length; i++) {
+      let bot = enemyBots[i];
+      enemyBots[i].url = bot.url + ":" + bot.rewards;
+      enemyBots[i].name =
+        bot.name + (bot.rewards > 0 ? " (+" + bot.rewards + ")" : "");
+    }
     cyanBots = Object.assign([], enemyBots);
     cyanBots.sort(() => 0.5 - Math.random());
     redBots = Object.assign([], enemyBots);
     redBots.sort(() => 0.5 - Math.random());
     if (ow !== undefined) {
       myBots = await ow.list();
-      if (myBots.length > 0) myBot = myBots[0];
-    } else {
-      myBot = cyanBots[0].url;
     }
-    enemyBot = redBots[0].url;
+    updateSelectList();
+  }
+
+  function updateSelectList() {
+    filteredCyanBots = cyanBots.filter(
+      (item) =>
+        item.name.toLowerCase().indexOf(searchCyanBot.toLowerCase()) !== -1
+    );
+    filteredMyBots = myBots.filter(
+      (item) => item.toLowerCase().indexOf(searchCyanBot.toLowerCase()) !== -1
+    );
+    filteredRedBots = redBots.filter(
+      (item) =>
+        item.name.toLowerCase().indexOf(searchRedBot.toLowerCase()) !== -1
+    );
+
+    if (myBots.length > 0) {
+      myBot = filteredMyBots[0];
+    } else {
+      myBot = filteredCyanBots[0].url;
+    }
+    enemyBot = filteredRedBots[0].url;
+    console.log("updated", myBot, enemyBot);
   }
 
   let unsubscribeSource = source.subscribe((value) => {
@@ -94,7 +149,6 @@
     updateBots();
   });
 
-  
   function finish(winner: number) {
     msg = "Game over";
     if (winner == -2) {
@@ -165,14 +219,22 @@
   });
 
   function selected() {
+    console.log("mybot", myBot);
+    console.log("enemybot", enemyBot);
+
     let champ =
       myBots.length == 0
-        ? myBot
+        ? myBot.split(":")[0]
         : ow.namespace + "/default/" + myBot.split(".")[0];
 
-    let urls = [base + champ, base + enemyBot];
-  
-    console.log(urls);
+    let champExtra =
+      myBots.length == 0 ? parseInt(myBot.split(":")[1]) : $rewards;
+
+    let enemy = enemyBot.split(":")[0];
+    let enemyExtra = parseInt(enemyBot.split(":")[1]);
+
+    let urls = [base + champ, base + enemy];
+
     let canvas = document.getElementById("arena") as HTMLCanvasElement;
 
     let startAngles = [
@@ -180,18 +242,22 @@
       [Math.random() * 360, Math.random() * 360],
     ];
 
-    battle.webinit(canvas.getContext("2d"), urls, startAngles);
+    let startLives = [champExtra, enemyExtra];
+
+    battle.webinit(canvas.getContext("2d"), urls, startAngles, startLives);
     ready = true;
-    msg = "Starfighters in position!";
-    status = "Ready to fight.";
+    msg = "May the FAAS be with you!";
+    status = "Fighting!";
+    fighting = true;
     battle.draw();
+    battle.start();
   }
 
   function toggle() {
     fighting = !fighting;
     if (fighting) {
       status = "Fighting!";
-      msg = battle.start();
+      battle.start();
     } else {
       status = "Suspended...";
       battle.stop();
@@ -212,81 +278,84 @@
   onDestroy(unsubscribeSource);
 </script>
 
-<style>
-  #arena {
-    border: 1px solid grey;
-    float: left;
-  }
-
-  #cyan {
-    color: rgb(66, 168, 205);
-  }
-  #red {
-    color: rgb(211, 19, 19);
-  }
-</style>
-
 <main class="wrapper">
   <section class="container">
-    <h1>{msg}</h1>
+    <div class="row">
+      {#if msg == ""}
+        <img
+          style="padding-bottom: 20px"
+          alt="banner"
+          width="500"
+          class="center"
+          src="img/banner.png"
+        />
+      {:else}
+        <h1>{msg}</h1>
+      {/if}
+    </div>
     <div class="row"><canvas id="arena" width="500" height="500" /></div>
-    {#if $submitting != ''}
+    {#if $submitting != ""}
       <Submit {ow} />
     {:else if !ready}
       <div class="row">
-        <h3>
-          <a
-            href="-"
-            on:click={(event) => {
-              console.log('click');
-              board.set({ show: true, round: '' });
-              event.preventDefault();
-            }}>Leaderboard</a>
-        </h3>
+        <h3>Make Your Choice</h3>
       </div>
       <div class="row">
         <div class="column column-left column-offset">
-          <label for="enemy">Red Fighter (Enemy)</label>
-          <select bind:value={enemyBot} id="enemy">
-            {#each redBots as enemy}
-              <option value={enemy.url}>{enemy.name}</option>
-            {/each}
-          </select>
-        </div>
-        <div class="column column-right">
-          <label for="mybot">Cyan Fighter (You)</label>
+          <label
+            >Filter Yellow Fighters: <input
+              bind:value={searchCyanBot}
+              on:input={updateSelectList}
+            /></label
+          >
+          <label for="mybot">Yellow Fighter (You)</label>
           <select bind:value={myBot} id="enemy">
             {#if myBots.length == 0}
-              {#each cyanBots as enemy}
+              {#each filteredCyanBots as enemy}
                 <option value={enemy.url}>{enemy.name}</option>
               {/each}
             {:else}
-              {#each myBots as bot}
-                <option value={bot}>{bot.split('.')[0]}</option>
+              {#each filteredMyBots as bot}
+                <option value={bot}
+                  >{bot.split(".")[0]}{$rewards > 0
+                    ? " (+" + $rewards + ")"
+                    : ""}</option
+                >
               {/each}
             {/if}
           </select>
         </div>
+        <div class="column column-right">
+          <label
+            >Filter Red Fighters: <input
+              bind:value={searchRedBot}
+              on:input={updateSelectList}
+            /></label
+          >
+          <label for="enemy">Red Fighter (Enemy)</label>
+          <select bind:value={enemyBot} id="enemy">
+            {#each filteredRedBots as enemy}
+              <option value={enemy.url}>{enemy.name}</option>
+            {/each}
+          </select>
+        </div>
       </div>
       <div class="row">
         <div class="column column-left column-offset">
-          <button id="done" on:click={selected}>Start the Battle</button>
-        </div>
-        <div class="column column-right">
           {#if ow === undefined}
-            <button
-              id="login"
-              on:click={() => {
-                location.href = URL_LOGIN;
-              }}>Login to Nimbella</button>
+            <button id="login" on:click={login}>Login</button>
           {:else}
             <div class="column column-right">
-              <button
-                id="edit"
-                on:click={edit}
-                disabled={myBots.length == 0}>Edit my Fighter</button>
+              <button id="edit" on:click={edit} disabled={myBots.length == 0}
+                >Edit my Fighter</button
+              >
             </div>
           {/if}
+        </div>
+        <div class="column column-right">
+          <button id="done" disabled={!canStartBattle} on:click={selected}
+            >Start the Battle</button
+          >
         </div>
       </div>
       {#if ow === undefined}
@@ -294,13 +363,10 @@
           <div class="column column-center column-offset">
             <h4>
               Welcome to
-              <b><a href="https://faaswars.nimbella.com">FAAS Wars</a></b>
-              v{VERSION}. Please sign up and login to Nimbella to create and
-              edit your starfighters.<br />
+              <b>FAAS Wars</b>
+              v{VERSION}.<br />Please check the
+              <a href="license.html">License</a>.<br />
             </h4>
-            <Share
-              message="FAAS WARS: Code your fighter, learn serverless and win cash prize."
-              url="https://faaswars.nimbella.com" />
           </div>
         </div>
       {:else}
@@ -313,7 +379,8 @@
               type="text"
               bind:value={robotName}
               placeholder="robot name"
-              id="botname" />
+              id="botname"
+            />
           </div>
         </div>
         <div class="row">
@@ -323,7 +390,8 @@
               disabled={myBots.length == 0}
               on:click={() => {
                 submitting.set(myBot);
-              }}>Submit to FAAS WARS</button>
+              }}>Submit to FAAS WARS</button
+            >
           </div>
           <div class="column column-right">
             <select bind:value={robotType}>
@@ -334,19 +402,16 @@
           </div>
         </div>
         <h4>{extra}</h4>
-        <Share />
       {/if}
     {:else}
       <div class="row">
         <h3>{status}</h3>
       </div>
       <div class="row">
-        <h4>
-          You:
-          <span id="cyan">{battle.robotName(0)}</span><br>
-          Enemy:
+        <h1>
+          <span id="yellow">{battle.robotName(0)}</span> vs
           <span id="red">{battle.robotName(1)}</span>
-        </h4>
+        </h1>
       </div>
       <div class="row">
         <div class="column column-left column-offset">
@@ -360,11 +425,11 @@
               ready = false;
               fighting = false;
               battle.terminate();
-            }}>Stop</button><br />
-          <button
-            id="edit"
-            on:click={edit}
-            disabled={myBots.length == 0}>Edit</button>
+            }}>Stop</button
+          ><br />
+          <button id="edit" on:click={edit} disabled={myBots.length == 0}
+            >Edit</button
+          >
         </div>
         <div class="column column-right">
           <br />
@@ -373,7 +438,8 @@
             Debug<br />
             <a
               href="https://apigcp.nimbella.io/wb/?command=activation+list"
-              target="workbench">Logs</a>
+              target="workbench">Logs</a
+            >
           </label><br />
         </div>
       </div>
@@ -417,3 +483,17 @@
     {/if}
   </section>
 </main>
+
+<style>
+  #arena {
+    border: 1px solid grey;
+    float: left;
+  }
+
+  #yellow {
+    color: rgb(211, 211, 25);
+  }
+  #red {
+    color: rgb(211, 19, 19);
+  }
+</style>

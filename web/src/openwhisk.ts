@@ -12,6 +12,26 @@ export class OpenWhisk {
         this.namespace = namespace
     }
 
+    // execute an authenticated get to the given url
+    // returns the body as text
+    async authGet(url: string): Promise<string> {
+        let req = {
+            method:  'GET',
+            headers: {
+                'Authorization': this.auth
+            }
+        }
+        return await fetch(url, req)
+            .then((resp) => {
+                if (resp.ok)
+                    return resp.text()
+                return "ERROR"
+            })
+            .catch((err) => {
+                return "ERROR"
+            })
+    }
+
     // handle a request
     // accepts: <method>:<action>
     // compose a request with authentication, methods and body

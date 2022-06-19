@@ -15,8 +15,8 @@ button {
 
 @font-face {
   font-family: "Star Jedi Outline";
-  src: url("/font/StarJediOutline.woff2") format("woff2"),
-    url("/font/StarJediOutline.woff") format("woff");
+  src: url("/api/v1/web/nuvolaris/default/faaswars/font/StarJediOutline.woff2") format("woff2"),
+    url("/api/v1/web/nuvolaris/default/faaswars/font/StarJediOutline.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -24,8 +24,8 @@ button {
 
 @font-face {
   font-family: "Noto Sans";
-  src: url("/font/NotoSans.woff2") format("woff2"),
-    url("/font/NotoSans.woff") format("woff");
+  src: url("/api/v1/web/nuvolaris/default/faaswars/font/NotoSans.woff2") format("woff2"),
+    url("/api/v1/web/nuvolaris/default/faaswars/font/NotoSans.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -33,18 +33,18 @@ button {
 
 h1 {
   font-family: "Star Jedi Outline";
-  color: rgb(33 95 132);
+  color: darkorange;
 }
 
 h2,
 h3,
 h4 {
   font-family: "Noto Sans";
-  color: rgb(33 95 132);
+  color: darkorange;
 }
 
 a {
-  color: #0c78c3;
+  color:orangered;
 }
 
 canvas {

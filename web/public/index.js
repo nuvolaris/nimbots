@@ -12,6 +12,9 @@ ctypes = {
     "ttf":  [false, "font/ttf"],
     "woff": [false, "font/woff"],
     "woff2":[false, "font/woff2"],
+    "js":[true, "text/plain"],
+    "py":[true, "text/plain"],
+    "gp":[true, "test/plain"],
 }
 
 function body(path) {
@@ -55,8 +58,17 @@ function main(args) {
     if ("error" in res) {
         return { "body": res }
     }
-    // check login
     let path = args['__ow_path'];
+    // echo
+    if (path == "/echo") {
+        return {
+            "body": {
+                "args": args,
+                "env": process.env
+            }
+        }
+    }
+    // check login
     if (path == "/login") {
         res = { "error": "wrong password" }
         if (args.password && args.password == args.secret)

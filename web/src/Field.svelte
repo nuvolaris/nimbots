@@ -1,7 +1,7 @@
 <script lang="ts">
   import fetch from "cross-fetch";
   import { OpenWhisk } from "./openwhisk";
-  import { URL_LOGIN, VERSION } from "./const";
+  import { VERSION } from "./const";
   import { BattleWeb } from "./battleweb";
   import { AssetsLoader } from "./util";
   import { onMount, afterUpdate, onDestroy } from "svelte";
@@ -11,6 +11,8 @@
   import Submit from "./Submit.svelte";
 
   export let base: string;
+  export let apihost: string;
+  export let namespace: string;
   export let ow: OpenWhisk;
 
   let battle: BattleWeb;
@@ -18,7 +20,6 @@
   let status = "Select Opponents";
 
   let ready = false;
-  let speed = BattleWeb.speed;
   let debug = false;
   let extra = "";
 
@@ -44,31 +45,33 @@
   let canStartBattle = true;
 
   let robotMap = {
-    js: "/src/JsBot.js",
-    go: "/src/GoBot.go",
-    py: "/src/PyBot.py",
+    js: base+"/src/JsBot.js",
+    go: base+"/src/GoBot.go",
+    py: base+"/src/PyBot.py",
   };
   let regex = /^\w{1,60}$/g;
 
   function login() {
-    let url = new URL(location.href);
-    let path = url.pathname.split("/");
-    path[path.length - 1] = "login";
-    url.pathname = path.join("/");
-    url.port = "3233";
-    fetch(url.href, {
+    fetch(base+"/login", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         password: prompt("Password:"),
       }),
     })
       .then((r) => r.json())
       .then((r) => {
+        console.log(r)
         if ("error" in r) {
           alert(r.error);
         } else {
-          ow = new OpenWhisk("http://localhost:3233", r["token"], "nuvolaris");
-          window["ow"] = ow;
+          if("token" in r) {
+            alert("OK!")
+            ow = new OpenWhisk(apihost, r["token"], namespace);
+            window["ow"] = ow;
+          }
         }
       })
       .catch((ex) => {

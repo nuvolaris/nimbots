@@ -5,29 +5,32 @@
 
   import Field from "./Field.svelte";
   import Editor from "./Editor.svelte";
-  import { OpenWhisk } from "./openwhisk";
-  
-  import { source, rewards, share } from "./store";
-  // decode login
-  let url = new URL(location.href);
+  import { source } from "./store";
+
+  // shared openwhisk
+  import type { OpenWhisk } from "./openwhisk";
   let ow: OpenWhisk = undefined;
 
+  // calculate api server location from the url
+  let url = new URL(location.href);
+  // remove the index.html
+  let a = url.pathname.split("/");
+  let namespace = a[a.length - 4];
+  url.pathname = a.slice(0, -1).join("/");
 
-  if (url.hash.length > 1) {
-    console.log(url.hash);
-    localStorage.setItem("referrer", url.hash.substring(1));
-    url.hash = "";
-    location.href = url.href;
+  // if the location.host is localhost:5000 you are in development mode
+  // you need a surgery to contact the locally running openwhisk
+  if (location.host == "localhost:5000") {
+    url.port = "3233";
   }
-
-  // calculate api server location
-  let apiserver = "apigcp.nimbella.io";
-  let path = "/api/v1/web/";
-  let base = "https://" + apiserver + path;
+  // get base and apihost
+  let base = url.href;
+  url.pathname = "";
+  let apihost = url.href;
 </script>
 
 {#if $source == ""}
-  <Field {base} {ow} />
+  <Field {base} {namespace} {apihost} {ow} />
 {:else}
   <Editor {ow} />`
 {/if}

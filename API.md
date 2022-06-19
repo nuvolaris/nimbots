@@ -1,6 +1,5 @@
 # How to code your fighter
 
-
 This document is a quick recap of the API. You can also [read this tutorial](https://nimbella.com/blog/faas-wars-serverless-virtual-robot-competition?utm_source=subdomain&utm_medium=landing&utm_campaign=faaswars).
 
 You control your fighter writing a serverless action. [Check here the source code of the sample fighters](https://github.com/openwhisk-blog/nimbots/tree/master/packages/default). You can use the integrated editor to code your fighter but you need to setup an account in Nimbella to play.

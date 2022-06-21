@@ -3,6 +3,7 @@
 const fs = require('fs');
 
 ctypes = {
+    "gif": "image/gif",
     "jpg": "image/jpeg",
     "png": "image/png",
     "ico": "image/vnd.microsoft.icon",
@@ -12,7 +13,8 @@ ctypes = {
 }
 
 function isBinary(file) {
-    return file.endsWith(".jpg") ||
+    return file.endsWith(".gif") ||
+        file.endsWith(".jpg") ||
         file.endsWith(".png") ||
         file.endsWith(".ico") ||
         file.endsWith(".ttf") ||
@@ -64,7 +66,9 @@ function main(args) {
         return { "body": res }
     }
     let path = args['__ow_path'];
-    // echo
+    // echo - disabled - for debug only 
+    // do not left enabled as leaks api keys
+    /*
     if (path == "/echo") {
         return {
             "body": {
@@ -72,13 +76,15 @@ function main(args) {
                 "env": process.env
             }
         }
-    }
+    }*/
     // check login
     if (path == "/login") {
         res = { "error": "wrong password" }
         if (args.password && args.password == args.secret)
             res = { "token": process.env["__OW_API_KEY"] }
-        return { "body": res }
+        return { 
+            "body": res
+        }
     }
     // send body
     if (path != "") {

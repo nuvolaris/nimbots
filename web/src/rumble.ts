@@ -1,4 +1,3 @@
-import fetch from 'cross-fetch'
 import { URL_REGISTER, URL_SUBMIT, URL_PUBLIC } from './const'
 
 export function rumbleSave(name: string, code: string): Promise<string> {

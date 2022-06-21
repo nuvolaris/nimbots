@@ -1,5 +1,3 @@
-import fetch from 'cross-fetch'
-
 export const HP = 5
 
 const BULLET_SPEED = 3

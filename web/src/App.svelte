@@ -8,9 +8,7 @@
   import { source } from "./store";
 
   // shared openwhisk
-  import type { OpenWhisk } from "./openwhisk";
-  let ow: OpenWhisk = undefined;
-
+  
   // calculate api server location from the url
   let url = new URL(location.href);
   // remove the index.html
@@ -26,12 +24,13 @@
   // get base and apihost
   let base = url.href;
   url.pathname = "";
-  let apihost = url.href.slice(0,-1);
+  let apihost = url.href.slice(0, -1);
   //console.log(apihost)
 </script>
 
+
 {#if $source == ""}
-  <Field {base} {namespace} {apihost} {ow} />
+  <Field {base} {namespace} {apihost} />
 {:else}
-  <Editor {ow} />`
+  <Editor />
 {/if}

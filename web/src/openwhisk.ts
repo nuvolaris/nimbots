@@ -1,5 +1,3 @@
-import fetch from 'cross-fetch'
-
 export class OpenWhisk {
 
     base: string
@@ -82,12 +80,12 @@ export class OpenWhisk {
     async load(filename: string): Promise<string> {
         let name = filename.split(".")[0]
         let data = await this.call("actions/" + name + "?code=true")
-        //console.log(data)
         if("error" in data) {
             return data["error"]
         }
         //console.log("load", data)
-        return data["exec"]["code"]
+        let code = data["exec"]["code"]
+        return code
     }
 
     async del(filename: string): Promise<object> {

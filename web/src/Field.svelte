@@ -1,21 +1,19 @@
 <script lang="ts">
-  import fetch from "cross-fetch";
   import { OpenWhisk } from "./openwhisk";
   import { URL_BASE, VERSION } from "./const";
   import { BattleWeb } from "./battleweb";
   import { AssetsLoader } from "./util";
   import { onMount, afterUpdate, onDestroy } from "svelte";
-  import { inspector, source, submitting, rewards } from "./store";
+  import { inspector, source, rewards, ow } from "./store";
   import { log } from "./robot";
   import { rumblePublic } from "./rumble";
-  
+
   export let base: string;
   export let apihost: string;
   export let namespace: string;
-  export let ow: OpenWhisk;
-
+  
   let battle: BattleWeb;
-  let msg = ow === undefined ? "" : "Choose opponents";
+  let msg = $ow === undefined ? "" : "Choose opponents";
   let status = "Select Opponents";
 
   let ready = false;
@@ -44,31 +42,38 @@
   let canStartBattle = true;
 
   let robotMap = {
-    js: base+"/src/JsBot.js",
-    go: base+"/src/GoBot.go",
-    py: base+"/src/PyBot.py",
+    js: base + "/src/JsBot.js",
+    go: base + "/src/GoBot.go",
+    py: base + "/src/PyBot.py",
   };
   let regex = /^\w{1,60}$/g;
 
+  function check(r) {
+    if(r.ok) return r.json()
+    else {
+      console.log(r)
+    }
+  }
+
   function login() {
-    fetch(base+"/login", {
+    let url = base + "/login";
+    let password = "s3cr3t"; //prompt("Password:")
+    console.log(url);
+    fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        password: prompt("Password:"),
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: password }),
     })
-      .then((r) => r.json())
+      .then(check)
       .then((r) => {
-        console.log(r)
+        console.log(r);
         if ("error" in r) {
           alert(r.error);
         } else {
-          if("token" in r) {
-            ow = new OpenWhisk(apihost, r["token"], namespace);
-            window["ow"] = ow;
+          if ("token" in r) {
+            ow.set(new OpenWhisk(apihost, r["token"], namespace));
+            window["ow"] = $ow;
+            updateBots()
           }
         }
       })
@@ -91,7 +96,7 @@
       })
       .then((code) => {
         bot = robotName + "." + robotType;
-        return ow.save(bot, code, false);
+        return $ow.save(bot, code, false);
       })
       .then(async (result) => {
         console.log(result);
@@ -117,8 +122,8 @@
     cyanBots.sort(() => 0.5 - Math.random());
     redBots = Object.assign([], enemyBots);
     redBots.sort(() => 0.5 - Math.random());
-    if (ow !== undefined) {
-      myBots = await ow.list();
+    if ($ow !== undefined) {
+      myBots = await $ow.list();
     }
     updateSelectList();
   }
@@ -198,7 +203,7 @@
     editing = true;
   }
 
-  let image = ow === undefined ? "splash" : "ready";
+  let image = $ow === undefined ? "splash" : "ready";
   let Images = new AssetsLoader({
     splash: "img/splash.png",
     ready: "img/ready.png",
@@ -226,7 +231,7 @@
     let champ =
       myBots.length == 0
         ? myBot.split(":")[0]
-        : ow.namespace + "/default/" + myBot.split(".")[0];
+        : $ow.namespace + "/default/" + myBot.split(".")[0];
 
     let champExtra =
       myBots.length == 0 ? parseInt(myBot.split(":")[1]) : $rewards;
@@ -295,7 +300,7 @@
       {/if}
     </div>
     <div class="row"><canvas id="arena" width="500" height="500" /></div>
-   
+
     {#if !ready}
       <div class="row">
         <h3>Make Your Choice</h3>
@@ -342,7 +347,7 @@
       </div>
       <div class="row">
         <div class="column column-left column-offset">
-          {#if ow === undefined}
+          {#if $ow === undefined}
             <button id="login" on:click={login}>Login</button>
           {:else}
             <div class="column column-right">
@@ -358,7 +363,7 @@
           >
         </div>
       </div>
-      {#if ow === undefined}
+      {#if $ow === undefined}
         <div class="row">
           <div class="column column-center column-offset">
             <h4>

@@ -8,4 +8,3 @@ zip -r ../../../../../../../../faaswars.zip *
 cd ../../../../../..
 zip ../../faaswars.zip index.js package.json 
 popd
-bash deploy.sh

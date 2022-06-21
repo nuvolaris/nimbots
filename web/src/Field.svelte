@@ -169,7 +169,7 @@
       extra = "";
     } else if (winner == 0) {
       image = "won";
-      extra = "Great Achievement! Share it with your friends!";
+      extra = "Great!";
     } else {
       image = "lose";
       extra = "";
@@ -243,7 +243,8 @@
     let enemy = enemyBot.split(":")[0];
     let enemyExtra = parseInt(enemyBot.split(":")[1]);
 
-    let urls = [URL_BASE + champ, URL_BASE + enemy];
+    let prefix = $ow === undefined ? URL_BASE : apihost + "/api/v1/web/"; 
+    let urls = [prefix + champ, URL_BASE + enemy];
 
     let canvas = document.getElementById("arena") as HTMLCanvasElement;
 

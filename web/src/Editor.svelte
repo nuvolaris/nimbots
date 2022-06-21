@@ -1,8 +1,7 @@
 <script lang="ts">
-  import Doc from "./Doc.svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { source } from "./store";
   import type { OpenWhisk } from "./openwhisk";
+  import Doc from "./Doc.svelte";
+  import { source } from "./store";
   import { rumbleSave} from './rumble'
 
   export let ow: OpenWhisk;
@@ -19,10 +18,6 @@
     let filename = $source;
     let code = await ow.load(filename);
     editor.setValue(filename, code);
-  }
-
-  function warn(err) {
-    alert(err);
   }
 
   function cancel() {

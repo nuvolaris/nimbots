@@ -5,3 +5,4 @@ rumble/
 .DS_Store
 attic/
 *.old
+out.txt

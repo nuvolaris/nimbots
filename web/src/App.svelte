@@ -26,7 +26,8 @@
   // get base and apihost
   let base = url.href;
   url.pathname = "";
-  let apihost = url.href;
+  let apihost = url.href.slice(0,-1);
+  //console.log(apihost)
 </script>
 
 {#if $source == ""}

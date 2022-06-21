@@ -3,38 +3,43 @@
 const fs = require('fs');
 
 ctypes = {
-    "html": [true, "text/html"],
-    "css":  [true, "text/css"],
-    "js":   [true, "text/javascript"],
-    "jpg":  [false, "image/jpeg"],
-    "png":  [false, "image/png"],
-    "ico":  [false, "image/vnd.microsoft.icon"],
-    "ttf":  [false, "font/ttf"],
-    "woff": [false, "font/woff"],
-    "woff2":[false, "font/woff2"],
-    "js":[true, "text/plain"],
-    "py":[true, "text/plain"],
-    "gp":[true, "test/plain"],
+    "jpg": "image/jpeg",
+    "png": "image/png",
+    "ico": "image/vnd.microsoft.icon",
+    "ttf": "font/ttf",
+    "woff": "font/woff",
+    "woff2": "font/woff2"
+}
+
+function isBinary(file) {
+    return file.endsWith(".jpg") ||
+        file.endsWith(".png") ||
+        file.endsWith(".ico") ||
+        file.endsWith(".ttf") ||
+        file.endsWith(".woff") ||
+        file.endsWith(".woff2")
 }
 
 function body(path) {
     let file = `${__dirname}${path}`
-    let ext = path.split(".").pop()
-    let ctype = ext in ctypes ? ctypes[ext] : [false, 'application/octet-stream']
-    
-    if(! fs.existsSync(file)) {
+    if (!fs.existsSync(file)) {
         return {
-            body: "<h1> 504 not found</h1>",
+            body: "<h1>504 not found</h1>",
             statusCode: 504
         }
     }
     let data = fs.readFileSync(file)
-    return {
-        body: ctype[0] ? data.toString("utf-8") : data.toString("base64"),
+    if(isBinary(path)) 
+     return {
+        body: data.toString("base64"),
+        statusCode: 200,
         headers: {
-            "Content-Type": ctype[1],
-        }, 
-        statusCode: 200
+            "Content-Type": ctypes[path.split(".").pop()]
+        }
+    }
+    return {
+        body: data.toString("utf-8"),
+        statusCode: 200,
     }
 }
 

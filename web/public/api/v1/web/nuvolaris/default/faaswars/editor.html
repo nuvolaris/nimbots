@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
     <style type="text/css">
       html,
       body {
@@ -21,7 +20,7 @@
       require.config({ paths: { vs: "/api/v1/web/nuvolaris/default/faaswars/monaco-editor/min/vs" } });
       async function createEditor(value, language) {
         return new Promise(function (resolve) {
-          require(["/api/v1/web/nuvolaris/default/faaswarsvs/editor/editor.main"], function () {
+          require(["/api/v1/web/nuvolaris/default/faaswars/vs/editor/editor.main"], function () {
             var editor = monaco.editor.create(
               document.getElementById("container"),
               {

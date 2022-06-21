@@ -1,7 +1,7 @@
 import { Battle } from './battle'
 import { inspector } from './store'
 import { AssetsLoader } from './util'
-import { Robot, HP, degrees2radians, log } from './robot'
+import { Robot, degrees2radians } from './robot'
 
 const YELL_TIMEOUT = 50
 

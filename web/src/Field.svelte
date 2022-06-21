@@ -1,15 +1,14 @@
 <script lang="ts">
   import fetch from "cross-fetch";
   import { OpenWhisk } from "./openwhisk";
-  import { VERSION } from "./const";
+  import { URL_BASE, VERSION } from "./const";
   import { BattleWeb } from "./battleweb";
   import { AssetsLoader } from "./util";
   import { onMount, afterUpdate, onDestroy } from "svelte";
   import { inspector, source, submitting, rewards } from "./store";
   import { log } from "./robot";
   import { rumblePublic } from "./rumble";
-  import Submit from "./Submit.svelte";
-
+  
   export let base: string;
   export let apihost: string;
   export let namespace: string;
@@ -68,7 +67,6 @@
           alert(r.error);
         } else {
           if("token" in r) {
-            alert("OK!")
             ow = new OpenWhisk(apihost, r["token"], namespace);
             window["ow"] = ow;
           }
@@ -236,7 +234,7 @@
     let enemy = enemyBot.split(":")[0];
     let enemyExtra = parseInt(enemyBot.split(":")[1]);
 
-    let urls = [base + champ, base + enemy];
+    let urls = [URL_BASE + champ, URL_BASE + enemy];
 
     let canvas = document.getElementById("arena") as HTMLCanvasElement;
 
@@ -297,9 +295,8 @@
       {/if}
     </div>
     <div class="row"><canvas id="arena" width="500" height="500" /></div>
-    {#if $submitting != ""}
-      <Submit {ow} />
-    {:else if !ready}
+   
+    {#if !ready}
       <div class="row">
         <h3>Make Your Choice</h3>
       </div>
@@ -388,13 +385,7 @@
         </div>
         <div class="row">
           <div class="column column-left column-offset">
-            <button
-              id="submit"
-              disabled={myBots.length == 0}
-              on:click={() => {
-                submitting.set(myBot);
-              }}>Submit to FAAS WARS</button
-            >
+            Programming Language:
           </div>
           <div class="column column-right">
             <select bind:value={robotType}>

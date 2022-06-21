@@ -96,8 +96,8 @@ export class OpenWhisk {
     }
 
     ext2kind = {
-        "go": "go:1.12",
-        "js": "nodejs:10",
+        "go": "go:1.17",
+        "js": "nodejs:14",
         "py": "python:3"
     }
 

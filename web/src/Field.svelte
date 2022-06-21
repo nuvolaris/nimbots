@@ -11,7 +11,7 @@
   export let base: string;
   export let apihost: string;
   export let namespace: string;
-  
+
   let battle: BattleWeb;
   let msg = $ow === undefined ? "" : "Choose opponents";
   let status = "Select Opponents";
@@ -49,16 +49,20 @@
   let regex = /^\w{1,60}$/g;
 
   function check(r) {
-    if(r.ok) return r.json()
+    if (r.ok) return r.json();
     else {
-      console.log(r)
+      console.log(r);
     }
   }
 
+  let password = "";
+  let logging = false;
   function login() {
+    logging = false;
+    if (password == "") {
+      alert("password cannot be empty");
+    }
     let url = base + "/login";
-    let password = "s3cr3t"; //prompt("Password:")
-    console.log(url);
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -73,7 +77,7 @@
           if ("token" in r) {
             ow.set(new OpenWhisk(apihost, r["token"], namespace));
             window["ow"] = $ow;
-            updateBots()
+            updateBots();
           }
         }
       })
@@ -348,7 +352,22 @@
       <div class="row">
         <div class="column column-left column-offset">
           {#if $ow === undefined}
-            <button id="login" on:click={login}>Login</button>
+            {#if logging}
+              <form on:submit|preventDefault={login}>
+                <input
+                  bind:value={password}
+                  type="password"
+                  placeholder="password then enter"
+                />
+              </form>
+            {:else}
+              <button
+                id="login"
+                on:click={() => {
+                  logging = true;
+                }}>Login</button
+              >
+            {/if}
           {:else}
             <div class="column column-right">
               <button id="edit" on:click={edit} disabled={myBots.length == 0}

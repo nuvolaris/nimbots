@@ -22,6 +22,18 @@ function isBinary(file) {
         file.endsWith(".woff2")
 }
 
+
+// replace base in html and css
+function replaceBase(path, body) {
+    if(!(path.endsWith(".css") || path.endsWith(".html")))
+        return body
+    let toFind = '/nuvolaris/default/faaswars'
+    let toReplace = `/${process.env['__OW_NAMESPACE']}${process.env['__OW_ACTION_NAME']}`;
+    while(body.indexOf(toFind) != -1)
+        body = body.replace(toFind, toReplace)
+    return body
+}
+
 function body(path) {
     let file = `${__dirname}${path}`
     if (!fs.existsSync(file)) {
@@ -32,15 +44,15 @@ function body(path) {
     }
     let data = fs.readFileSync(file)
     if(isBinary(path)) 
-     return {
-        body: data.toString("base64"),
-        statusCode: 200,
-        headers: {
-            "Content-Type": ctypes[path.split(".").pop()]
+        return {
+            body: data.toString("base64"),
+            statusCode: 200,
+            headers: {
+                "Content-Type": ctypes[path.split(".").pop()]
+            }
         }
-    }
     return {
-        body: data.toString("utf-8"),
+        body: replaceBase(path, data.toString("utf-8")),
         statusCode: 200,
     }
 }
@@ -67,7 +79,7 @@ function main(args) {
     }
     let path = args['__ow_path'];
     // echo - disabled - for debug only 
-    // do not left enabled as leaks api keys
+    // do not leave enabled as leaks api keys
     /*
     if (path == "/echo") {
         return {
@@ -76,7 +88,7 @@ function main(args) {
                 "env": process.env
             }
         }
-    }*/
+    }/**/
     // check login
     if (path == "/login") {
         res = { "error": "wrong password" }
@@ -88,9 +100,9 @@ function main(args) {
     }
     // send body
     if (path != "") {
-        return body(path)
+        return body(path) 
     }
-    // return redirect
+    // return redirect if no path
     return { "body": `<script>location.href += "/index.html"</script>` }
 }
 

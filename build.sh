@@ -1,12 +1,12 @@
 #!/bin/bash
-rm faaswars.zip
+rm -f skybattle.zip
 bash mkdoc.sh API.md help.html "Help"
 bash mkdoc.sh LICENSE.md license.html "License"
 pushd web
 npm install
 npm run build
 cd public/api/v1/web/nuvolaris/default/faaswars
-zip -r ../../../../../../../../faaswars.zip *
+zip -r ../../../../../../../../skybattle.zip *
 cd ../../../../../..
-zip ../../faaswars.zip index.js package.json 
+zip ../../skybattle.zip index.js package.json 
 popd

@@ -40,7 +40,9 @@ cu $URL/login?password=pippo | grep error | save
 ## test you cannot override!
 cu "$URL/login?password=pippo&secret=pippo" |  grep error | save
 # "error": "Request defines parameters that are not allowed (e.g., reserved properties)."
+
 ## test content
+# source init.src
 rm -f index.zip
 zip -q -r index.zip  index.js package.json index.html favicon.ico JsBot.js
 nuv wsk action update faaswars index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
@@ -60,6 +62,13 @@ cu -v $URL/JsBot.js | grep function | save
 cu -v $URL/nothing 2>&1 | egrep 'Content-Type:|h1' | save
 #< Content-Type: text/html; charset=UTF-8
 #<h1>504 not found</h1>
+
+# replace
+nuv wsk package create test
+nuv wsk action update test/skybattle index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
+URL1=$(nuv wsk action get --url test/skybattle | tail +2)
+cu $URL1/index.html | grep test
+# location.pathname = "/api/v1/web/nuvolaris/nuvolaris/test/skybattle/index.html"
 
 mv out.txt ../..
 rm -f index.zip out.tmp

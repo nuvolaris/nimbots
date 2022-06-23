@@ -1,6 +1,6 @@
 # Sky Battle
 
-Welcome to Sky Battle, a programming game based on Nuvolaris.
+Welcome to Sky Battle, a programming game based on [Nuvolaris](https://www.nuvolaris.io).
 
 You play Sky Battle just coding your robot as a serverless action.
 
@@ -10,7 +10,7 @@ Your robot can then fight against other robots.
 
 # How to install Sky Battle
 
-First, install Nuvolaris from [get.nuvolaris.io](get.nuvolaris.io).
+First, install Nuvolaris from [get.nuvolaris.io](https://get.nuvolaris.io).
 
 You can install it basically everywhere, locally, in a Virtual Machine or in a Kubernetes cluster.
 
@@ -34,7 +34,7 @@ Then get the url with:
 nuv wsk action get skybattle --url
 ```
 
-and start playing.
+open the browser in the url and start playing.
 
 # How to code your robot
 

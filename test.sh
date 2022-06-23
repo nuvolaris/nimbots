@@ -59,16 +59,15 @@ file out.tmp | save
 # out.tmp: MS Windows icon resource - 4 icons, 64x64, 32 bits/pixel, 32x32, 32 bits/pixel
 cu -v $URL/JsBot.js | grep function | save
 # function main(args){
-cu -v $URL/nothing 2>&1 | egrep 'Content-Type:|h1' | save
-#< Content-Type: text/html; charset=UTF-8
-#<h1>504 not found</h1>
+cu  $URL/nothing 2>&1 | egrep 'h1' | save
+# <h1>504 not found</h1>
 
 # replace
 nuv wsk package create test
-nuv wsk action update test/skybattle index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
-URL1=$(nuv wsk action get --url test/skybattle | tail +2)
+nuv wsk action update test/test index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
+URL1=$(nuv wsk action get --url test/test | tail +2)
 cu $URL1/index.html | grep test
-# location.pathname = "/api/v1/web/nuvolaris/nuvolaris/test/skybattle/index.html"
+# location.pathname = "/api/v1/web/nuvolaris/nuvolaris/test/test/index.html"
 
 mv out.txt ../..
 rm -f index.zip out.tmp

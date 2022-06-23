@@ -7,5 +7,5 @@ cu() {
 save() { 
     tee -a out.txt 
 }
-nuv wsk action update faaswars index.js
-URL=$(nuv wsk action get faaswars --url | tail +2)
+nuv wsk action update skybattle index.js
+URL=$(nuv wsk action get skybattle --url | tail +2)

@@ -25,8 +25,8 @@ function isBinary(file) {
 
 // replace base in html and css
 function replaceBase(path, body) {
-    // filter only .css and .html
-    if(!(path.endsWith(".css") || path.endsWith(".html")))
+    // filter .html
+    if(!path.endsWith(".html"))
         return body
     // calculate toReplace    
     let a = process.env['__OW_ACTION_NAME'].split("/")
@@ -34,7 +34,7 @@ function replaceBase(path, body) {
       a.splice(-1, 0, "default")
     let toReplace = a.join("/");
     // replace all
-    let toFind = '/nuvolaris/default/faaswars'
+    let toFind = '/nuvolaris/default/skybattle'
     while(body.indexOf(toFind) != -1)
         body = body.replace(toFind, toReplace)
     return body

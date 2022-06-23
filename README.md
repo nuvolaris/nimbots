@@ -1,18 +1,45 @@
-# Nimbots!
+# Sky Battle
 
-Welcome to Nimbots, a programming game based on Nimbella.
+Welcome to Sky Battle, a programming game based on Nuvolaris.
 
-You play Nimbots just coding your robot as a serverless action.
+You play Sky Battle just coding your robot as a serverless action.
 
-Your robot can then fight against other robots in the [Nimbots Arena](https://nimbots-apigcp.nimbella.io/)!
+Your robot can then fight against other robots.
 
-![Nimbots](/web/public/img/splash.png)
+![Sky Battle](/web/public/img/splash.png)
+
+# How to install Sky Battle
+
+First, install Nuvolaris from [get.nuvolaris.io](get.nuvolaris.io).
+
+You can install it basically everywhere, locally, in a Virtual Machine or in a Kubernetes cluster.
+
+If you have Docker on your local machine, the simplest way is [download the installer](https://www.nuvolaris.io/Download) and use the command:
+
+```
+nuv setup --devcluster
+```
+
+Once Nuvolaris is installed, you can download the SkyBattle action (it is the file `skybattle.zip`) from [here](https://github.com/nuvolaris/skybattle/releases) and run:
+
+```
+nuv wsk action update skybattle skybattle.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
+```
+
+Change the password `s3cr3t` to your favorite.
+
+Then get the url with: 
+
+```
+nuv wsk action get skybattle --url
+```
+
+and start playing.
 
 # How to code your robot
 
-You can code your actions in any programming language supported by Nimbella. 
+You can code your fighter in any programming language supported by Nuvolaris. 
 
-[The API is described here](API.md).
+How to control your fighter [is described here](API.md).
 
-You can also check [those examples](packages/default) for inspiration.
-
+You can also check [those examples](web/public/api/v1/web/nuvolaris/default/skybattle/samples) for inspiration.

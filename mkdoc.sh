@@ -1,7 +1,7 @@
 SRC="${1:?source}"
 TGT="${2:?target}"
 TIT="${3:?title}"
-TGT="web/public/api/v1/web/nuvolaris/default/faaswars/$TGT"
+TGT="web/public/api/v1/web/nuvolaris/default/skybattle/$TGT"
 cat <<EOF >$TGT
 <html>
 <head>

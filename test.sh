@@ -12,20 +12,20 @@ pushd web/public
 rm -f out.txt
 source init.src
 
-nuv wsk action delete faaswars
+nuv wsk action delete skybattle
 ## test params
-nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true
+nuv wsk action update skybattle index.js --kind=nodejs:14 --web=true
 cu $URL | grep error | save
 # "error": "not deployed with -a provide-api-key true "
-nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true -a provide-api-key true
+nuv wsk action update skybattle index.js --kind=nodejs:14 --web=true -a provide-api-key true
 cu $URL | grep error | save
 # "error": "not deployed with -p secret <password>"
-nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
+nuv wsk action update skybattle index.js --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
 cu $URL | save
 # <script>location.href += "/index.html"</script>
 
 ## check body
-nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
+nuv wsk action update skybattle index.js --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
 ## no pw
 cu $URL/login | grep error | save
 # "error": "wrong password"
@@ -45,7 +45,7 @@ cu "$URL/login?password=pippo&secret=pippo" |  grep error | save
 # source init.src
 rm -f index.zip
 zip -q -r index.zip  index.js package.json index.html favicon.ico JsBot.js
-nuv wsk action update faaswars index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
+nuv wsk action update skybattle index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
 
 ## export statics
 cu $URL | save

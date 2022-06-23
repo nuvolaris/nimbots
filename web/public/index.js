@@ -25,10 +25,16 @@ function isBinary(file) {
 
 // replace base in html and css
 function replaceBase(path, body) {
+    // filter only .css and .html
     if(!(path.endsWith(".css") || path.endsWith(".html")))
         return body
+    // calculate toReplace    
+    let a = process.env['__OW_ACTION_NAME'].split("/")
+    if(a.length == 3)
+      a.splice(-1, 0, "default")
+    let toReplace = a.join("/");
+    // replace all
     let toFind = '/nuvolaris/default/faaswars'
-    let toReplace = `/${process.env['__OW_NAMESPACE']}${process.env['__OW_ACTION_NAME']}`;
     while(body.indexOf(toFind) != -1)
         body = body.replace(toFind, toReplace)
     return body
@@ -80,7 +86,7 @@ function main(args) {
     let path = args['__ow_path'];
     // echo - disabled - for debug only 
     // do not leave enabled as leaks api keys
-    /*
+    /**/
     if (path == "/echo") {
         return {
             "body": {

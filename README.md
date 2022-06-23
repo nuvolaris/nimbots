@@ -6,7 +6,7 @@ You play Sky Battle just coding your robot as a serverless action.
 
 Your robot can then fight against other robots.
 
-![Sky Battle](/web/public/img/splash.png)
+![Sky Battle](/web/public/api/v1/web/nuvolaris/default/skybattle/img/splash.png)
 
 # How to install Sky Battle
 

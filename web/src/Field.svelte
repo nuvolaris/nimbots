@@ -27,7 +27,7 @@
   let editing = false;
 
   let robotName = "";
-  let robotType = "js";
+  let robotType = "";
 
   let myBots: string[] = [];
 
@@ -41,11 +41,17 @@
   let filteredRedBots = redBots;
   let canStartBattle = true;
 
-  let robotMap = {
-    js: base + "/src/JsBot.js",
-    go: base + "/src/GoBot.go",
-    py: base + "/src/PyBot.py",
-  };
+  let samples = [
+    "JsBot.js",
+    "GoBot.go",
+    "PyBot.py",
+    "BackAndForth.js",
+    "LookAndShot.js",
+    "LookAround.js",
+    "RandomTurn.js",
+    "Terminator.js",
+  ];
+  let sample = samples[0];
   let regex = /^\w{1,60}$/g;
 
   function check(r) {
@@ -92,8 +98,11 @@
       alert("Invalid Robot Name");
       return false;
     }
+    robotType = sample.split(".").pop()
+    let src = base + "/samples/" + sample
+    console.log(robotType, src)
     let bot: string;
-    return fetch(robotMap[robotType])
+    return fetch(src)
       .then((data) => {
         if (data.ok) return data.text();
         throw data.statusText;
@@ -243,7 +252,7 @@
     let enemy = enemyBot.split(":")[0];
     let enemyExtra = parseInt(enemyBot.split(":")[1]);
 
-    let prefix = $ow === undefined ? URL_BASE : apihost + "/api/v1/web/"; 
+    let prefix = $ow === undefined ? URL_BASE : apihost + "/api/v1/web/";
     let urls = [prefix + champ, URL_BASE + enemy];
 
     let canvas = document.getElementById("arena") as HTMLCanvasElement;
@@ -257,7 +266,7 @@
 
     battle.webinit(canvas.getContext("2d"), urls, startAngles, startLives);
     ready = true;
-    msg = "May the FAAS be with you!";
+    msg = "May the best fighter win the battle!";
     status = "Fighting!";
     fighting = true;
     battle.draw();
@@ -308,17 +317,11 @@
 
     {#if !ready}
       <div class="row">
-        <h3>Make Your Choice</h3>
+        <h3>Select the opponents</h3>
       </div>
       <div class="row">
         <div class="column column-left column-offset">
-          <label
-            >Filter Yellow Fighters: <input
-              bind:value={searchCyanBot}
-              on:input={updateSelectList}
-            /></label
-          >
-          <label for="mybot">Yellow Fighter (You)</label>
+          <label for="mybot">{ $ow ? "Your" : "Cyan"} Fighter</label>
           <select bind:value={myBot} id="enemy">
             {#if myBots.length == 0}
               {#each filteredCyanBots as enemy}
@@ -334,20 +337,26 @@
               {/each}
             {/if}
           </select>
+          <label
+          >Filter Cyan: <input
+            bind:value={searchCyanBot}
+            on:input={updateSelectList}
+          /></label
+        >
         </div>
         <div class="column column-right">
-          <label
-            >Filter Red Fighters: <input
-              bind:value={searchRedBot}
-              on:input={updateSelectList}
-            /></label
-          >
-          <label for="enemy">Red Fighter (Enemy)</label>
+          <label for="enemy">{$ow ? "Enemy" : "Red"} Fighter</label>
           <select bind:value={enemyBot} id="enemy">
             {#each filteredRedBots as enemy}
               <option value={enemy.url}>{enemy.name}</option>
             {/each}
           </select>
+          <label
+            >Filter Red: <input
+              bind:value={searchRedBot}
+              on:input={updateSelectList}
+            /></label
+          >
         </div>
       </div>
       <div class="row">
@@ -356,10 +365,12 @@
             {#if logging}
               <form on:submit|preventDefault={login}>
                 <input
+                  id="password"
                   bind:value={password}
                   type="password"
                   placeholder="password then enter"
                 />
+                <button on:click={login}>Go</button>
               </form>
             {:else}
               <button
@@ -388,9 +399,9 @@
           <div class="column column-center column-offset">
             <h4>
               Welcome to
-              <b>FAAS Wars</b>
-              v{VERSION}.<br />Please check the
-              <a href="license.html">License</a>.<br />
+              <b>Sky Battle</b>
+              v{VERSION} 
+              <a target="_blank" href="license.html">(read license)</a>.
             </h4>
           </div>
         </div>
@@ -410,13 +421,14 @@
         </div>
         <div class="row">
           <div class="column column-left column-offset">
-            Programming Language:
+            
           </div>
           <div class="column column-right">
-            <select bind:value={robotType}>
-              <option value="js">JavaScript</option>
-              <option value="py">Python</option>
-              <option value="go">Golang</option>
+            <label for="template">Pick a template:</label>
+            <select id="template" bind:value={sample}>
+              {#each samples as item}
+                <option value="{item}">{item}</option>
+              {/each}
             </select>
           </div>
         </div>
@@ -428,7 +440,7 @@
       </div>
       <div class="row">
         <h1>
-          <span id="yellow">{battle.robotName(0)}</span> vs
+          <span id="cyan">{battle.robotName(0)}</span> vs
           <span id="red">{battle.robotName(1)}</span>
         </h1>
       </div>
@@ -509,8 +521,8 @@
     float: left;
   }
 
-  #yellow {
-    color: rgb(211, 211, 25);
+  #cyan {
+    color: rgb(16, 162, 212);
   }
   #red {
     color: rgb(211, 19, 19);

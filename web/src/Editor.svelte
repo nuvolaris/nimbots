@@ -1,28 +1,39 @@
 <script lang="ts">
   import { ow } from "./store";
-  import Doc from "./Doc.svelte";
   import { source } from "./store";
   import { rumbleSave } from "./rumble";
 
-  let editor: Editor;
+  import CodeMirror from "codemirror";
+  import "codemirror/mode/javascript/javascript";
+  import "codemirror/mode/go/go";
+  import "codemirror/mode/python/python";
 
-  interface Editor extends Window {
-    setValue: (filename: string, code: string) => void;
-    getValue: () => string;
-  }
+  import { onMount } from "svelte";
 
-  async function init() {
-    editor = window.frames[0] as Editor;
-    let filename = $source;
-    console.log(filename)
-    let code = await $ow.load(filename);
-    console.log(code)
-    editor.setValue(filename, code);
-  }
+  export let base: string;
+ 
+  let modeMap = {
+    js: "javascript",
+    go: "go",
+    py: "python",
+  };
+
+  let editor = undefined;
+  onMount(() => {
+    editor = CodeMirror(document.getElementById("editor"), {
+      lineNumbers: true,
+    });
+    $ow.load($source).then((code) => {
+      let mode = modeMap[$source.split(".").pop()];
+      if (mode) editor.setOption("mode", mode);
+      if (code) editor.setValue(code);
+    });
+    window.scrollTo(0, 0);
+  });
 
   function cancel() {
     if (confirm("Are you sure you want to lose your changes?")) {
-      editor.setValue("", "");
+      editor.setValue("");
       source.set("");
     }
   }
@@ -34,7 +45,7 @@
     let botname = namespace.split("-")[0] + "/" + name;
     if (confirm("Are you sure you want to delete this Robot?")) {
       $ow.del($source).then(() => {
-        editor.setValue("", "");
+        editor.setValue("");
         source.set("");
       });
     }
@@ -53,22 +64,17 @@
     });
     await rumbleSave(`${$ow.namespace}:${$source}`, code);
   }
+
+  function help() {
+
+    window.open(base+"/help.html")
+
+  }
 </script>
 
 <main class="wrapper">
-  <section class="container">
-    <div class="row">
-      <iframe
-        on:load={init}
-        title="editor"
-        id="editor"
-        src="editor.html"
-        style="height: 500px; width: 100%;"
-        frameborder="0"
-        scrolling="no"
-      />
-    </div>
-    <br />
+  <div id="editor" name="editor" style="width: 100%; height: 90%;" />
+  <section class="container" style="height: 100%;">
     <div class="clearfix">
       <!-- Float either directions -->
       <div class="float-left">
@@ -77,6 +83,8 @@
         <button id="done" on:click={cancel}>Cancel</button>
         &nbsp;
         <button id="done" on:click={del}>Delete</button>
+        &nbsp;
+        <button id="help" on:click={help}>Help</button>
       </div>
       <div class="float-right">
         <h3>
@@ -84,8 +92,6 @@
         </h3>
       </div>
     </div>
-    <div class="row">
-      <Doc />
-    </div>
   </section>
 </main>
+>

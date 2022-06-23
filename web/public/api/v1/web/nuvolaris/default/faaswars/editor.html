@@ -1,40 +1,48 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+
+<html>
+
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>EditArea - the code editor in a textarea</title>
-	<script language="Javascript" type="text/javascript" src="edit_area/edit_area_full.js"></script>
-	<script language="Javascript" type="text/javascript">
-		editAreaLoader.init({
-			id: "editor"	// id of the textarea to transform		
-			, start_highlight: true	// if start with highlight
-			, allow_resize: "no"
-			, allow_toggle: true
-			, word_wrap: true
-			, language: "en"
-			, syntax: "js"
-			, syntax_selection_allow: "js,python,php,ruby"
-			, replace_tab_by_spaces: true
-			, show_line_colors: true
-			, toolbar: "search, go_to_line, |, undo, redo, |, select_font, |, syntax_selection, |, help"
-			, allow_toggle: false
-		});
-		function getValue() {
-			return editAreaLoader.getValue("editor")
-		}
-		function setValue(filename, text) {
-			let ext = filename.split(".").pop();
-			editAreaLoader.openFile("editor", {
-				"id": filename,
-				"title": filename,
-				"text": text,
-				"syntax": ext,
-				"do_highlight": true
-			})
-		}
-	</script>
+    <link rel="stylesheet" href="lib/codemirror.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="lib/codemirror.min.js"></script>
+    <script src="lib/mode/javascript/javascript.min.js"></script>
+    <script src="lib/mode/python/python.min.js"></script>
+    <script src="lib/mode/go/go.min.js"></script>
 </head>
+
 <body style="margin: 2px">
-<textarea id="editor" style="height: 480px; width: 100%;" name="editor"></textarea>
+    <textarea id="editor" style="height: 500px; width: 99%; border: 1px solid black;" name="editor"></textarea>
 </body>
+<script>
+
+    let modemap = {
+        "js": "javascript",
+        "go": "go",
+        "py": "python"
+    }
+
+    let editor = undefined
+
+    function setValue(filename, text) {
+        if (!editor) {
+            editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+                lineNumbers: true
+            }
+            )
+        }
+        let mode = modemap[filename.split(".").pop()];
+    
+        if (mode)
+            editor.setOption("mode", mode)
+        if (text)
+            editor.setValue(text)
+    }
+
+    function getValue() {
+        return editor ? editor.getValue() : ""
+    };
+
+</script>
+
 </html>

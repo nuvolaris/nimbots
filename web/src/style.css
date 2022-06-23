@@ -1,7 +1,13 @@
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: 100%;
+}
+
 button {
   background-color: #194577;
   border: 0.1rem solid #0c78c3;
-  color: #eadb0b;
+  color: white;
 }
 
 .flag {
@@ -13,38 +19,50 @@ button {
   border: 1px solid red;
 }
 
+/* kdam-thmor-pro-regular - latin */
 @font-face {
-  font-family: "Star Jedi Outline";
-  src: url("/api/v1/web/nuvolaris/default/faaswars/font/StarJediOutline.woff2") format("woff2"),
-    url("/api/v1/web/nuvolaris/default/faaswars/font/StarJediOutline.woff") format("woff");
-  font-weight: normal;
+  font-family: 'Kdam Thmor Pro';
   font-style: normal;
-  font-display: swap;
+  font-weight: 400;
+  src: url('/api/v1/web/nuvolaris/default/faaswars/font/kdam-thmor-pro-v1-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/api/v1/web/nuvolaris/default/faaswars/font/kdam-thmor-pro-v1-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/kdam-thmor-pro-v1-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/kdam-thmor-pro-v1-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/kdam-thmor-pro-v1-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/kdam-thmor-pro-v1-latin-regular.svg#KdamThmorPro') format('svg'); /* Legacy iOS */
 }
 
+/* noto-sans-regular - latin */
 @font-face {
-  font-family: "Noto Sans";
-  src: url("/api/v1/web/nuvolaris/default/faaswars/font/NotoSans.woff2") format("woff2"),
-    url("/api/v1/web/nuvolaris/default/faaswars/font/NotoSans.woff") format("woff");
-  font-weight: normal;
+  font-family: 'Noto Sans';
   font-style: normal;
-  font-display: swap;
+  font-weight: 400;
+  src: url('/api/v1/web/nuvolaris/default/faaswars/font/noto-sans-v27-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/api/v1/web/nuvolaris/default/faaswars/font/noto-sans-v27-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/noto-sans-v27-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/noto-sans-v27-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/noto-sans-v27-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/api/v1/web/nuvolaris/default/faaswars/font/noto-sans-v27-latin-regular.svg#NotoSans') format('svg'); /* Legacy iOS */
 }
+
+
 
 h1 {
-  font-family: "Star Jedi Outline";
-  color: darkorange;
+  font-family: "Kdam Thmor Pro";
+  color: rgb(16, 163, 212);
 }
 
 h2,
 h3,
 h4 {
   font-family: "Noto Sans";
-  color: darkorange;
+  color: rgb(96, 96, 96);
 }
 
 a {
-  color:orangered;
+  color: rgb(48, 48, 48);
 }
 
 canvas {

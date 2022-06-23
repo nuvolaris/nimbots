@@ -104,7 +104,7 @@ export class BattleWeb extends Battle {
                 robot.yell_ts = 0
                 robot.is_yell = false
             }
-            this.ctx.fillStyle = "#FFFFFF";
+            this.ctx.fillStyle = "#000000";
             this.ctx.fillText(text, textX, textY)
 
             this.ctx.rotate(degrees2radians(robot.tank_angle))
@@ -120,7 +120,7 @@ export class BattleWeb extends Battle {
                     this.ctx.save()
                     this.ctx.translate(b.x, b.y)
                     this.ctx.rotate(degrees2radians(b.direction))
-                    this.ctx.fillStyle = "#FFFFFF";
+                    this.ctx.fillStyle = "#000000";
                     this.ctx.fillRect(-3, -3, 6, 6)
                     this.ctx.restore()
                 }

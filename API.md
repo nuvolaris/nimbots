@@ -2,7 +2,7 @@
 
 This document is a quick recap of the API. You can also [read this tutorial](https://nimbella.com/blog/faas-wars-serverless-virtual-robot-competition?utm_source=subdomain&utm_medium=landing&utm_campaign=faaswars).
 
-You control your fighter writing a serverless action. [Check here the source code of the sample fighters](https://github.com/openwhisk-blog/nimbots/tree/master/packages/default). You can use the integrated editor to code your fighter but you need to setup an account in Nimbella to play.
+You control your fighter writing a serverless action. You can start from some templates included in the UI. You can use the integrated editor to code your fighter.
 
 A serverless action is a function, written in either Javascript, Python or Go, that receive as input a json document and returns its answer in json. In each programming language the json is serialized and deserialized first in a data structure appropriate for you programming language. When you create a fighter a suitable example is provided.
 

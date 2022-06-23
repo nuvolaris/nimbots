@@ -13,46 +13,55 @@ rm -f out.txt
 source init.src
 
 nuv wsk action delete faaswars
+## test params
 nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true
-# test params
 cu $URL | grep error | save
+# "error": "not deployed with -a provide-api-key true "
 nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true -a provide-api-key true
 cu $URL | grep error | save
+# "error": "not deployed with -p secret <password>"
 nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
 cu $URL | save
+# <script>location.href += "/index.html"</script>
 
-# check body
+## check body
 nuv wsk action update faaswars index.js --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
-# no pw
-cu $URL/login | save
-# right
+## no pw
+cu $URL/login | grep error | save
+# "error": "wrong password"
+## right
 cu "$URL/login?password=s3cr3t" | grep token | replace '\w' '*' -z | save
+# "*****": "********-****-****-****-************:****************************************************************"
 cu -v -X POST "$URL/login" -H "Content-Type: application/json" -d '{"password":"s3cr3t"}' | grep token | replace '\w' '*' -z | save
-# wrong
-cu $URL/login?password=pippo | save
-# test you cannot override!
+# "*****": "********-****-****-****-************:****************************************************************"
+## wrong
+cu $URL/login?password=pippo | grep error | save
+# "error": "wrong password"
+## test you cannot override!
 cu "$URL/login?password=pippo&secret=pippo" |  grep error | save
-
-# test content
+# "error": "Request defines parameters that are not allowed (e.g., reserved properties)."
+## test content
 rm -f index.zip
-zip -q -r index.zip  index.js package.json index.html favicon.ico src/JsBot.js src/test.json
+zip -q -r index.zip  index.js package.json index.html favicon.ico JsBot.js
 nuv wsk action update faaswars index.zip --kind=nodejs:14 --web=true -a provide-api-key true -p secret s3cr3t
 
-cu -v $URL/src/test.json
-cu -v $URL/src/JsBot.js
-
-# export statics
+## export statics
 cu $URL | save
+# <script>location.href += "/index.html"</script>
 cu -v $URL/index.html | grep Content-Type: | save
+# < Content-Type: text/html; charset=UTF-8
 cu -v $URL/favicon.ico | grep Content-Type: | save
+# < Content-Type: image/vnd.microsoft.icon
 cu $URL/favicon.ico >out.tmp
 file out.tmp | save
-cu -v $URL/src/JsBot.js | grep function | save
+# out.tmp: MS Windows icon resource - 4 icons, 64x64, 32 bits/pixel, 32x32, 32 bits/pixel
+cu -v $URL/JsBot.js | grep function | save
+# function main(args){
 cu -v $URL/nothing 2>&1 | egrep 'Content-Type:|h1' | save
+#< Content-Type: text/html; charset=UTF-8
+#<h1>504 not found</h1>
 
-
-cu -v $URL/src/test.json
-mv out.txt ..
+mv out.txt ../..
 rm -f index.zip out.tmp
 popd
 
@@ -60,6 +69,6 @@ popd
 #ECHO=$(nuv wsk action get echo --url | tail +2)
 #curl -s -X POST -H "Content-Type: application/json" -d '{"password":"s3cre3t"}' "$ECHO/pippo" 
 if diff out.txt out.ok
-then echo ok
-else echo FAIL ; exit 1
+then echo TEST: OK
+else echo TEST: FAIL ; exit 1
 fi

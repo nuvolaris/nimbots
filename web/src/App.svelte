@@ -1,6 +1,7 @@
 <script lang="ts">
   import "normalize.css/normalize.css";
   import "milligram/dist/milligram.min.css";
+  import "codemirror/lib/codemirror.css";
   import "./style.css";
 
   import Field from "./Field.svelte";
@@ -26,11 +27,11 @@
   url.pathname = "";
   let apihost = url.href.slice(0, -1);
   //console.log(apihost)
+  //source.set("Terminator.js")
 </script>
-
 
 {#if $source == ""}
   <Field {base} {namespace} {apihost} />
 {:else}
-  <Editor />
+  <Editor {base}/>
 {/if}

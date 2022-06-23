@@ -94,9 +94,9 @@ export class OpenWhisk {
     }
 
     ext2kind = {
-        "go": "go:1.17",
-        "js": "nodejs:14",
-        "py": "python:3"
+        "go": "go:default",
+        "js": "nodejs:default",
+        "py": "python:default"
     }
 
     async save(file: string, code: string, update: boolean): Promise<object> {

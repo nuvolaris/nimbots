@@ -1,0 +1,11 @@
+cu() {
+    echo ">>> curl" "$@" >>out.txt
+    echo ">>> curl" "$@" 1>&2
+    curl -s "$@" 2>&1
+    echo ""
+}
+save() { 
+    tee -a out.txt 
+}
+nuv wsk action update faaswars index.js
+URL=$(nuv wsk action get faaswars --url | tail +2)

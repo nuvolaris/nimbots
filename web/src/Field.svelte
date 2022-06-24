@@ -98,9 +98,9 @@
       alert("Invalid Robot Name");
       return false;
     }
-    robotType = sample.split(".").pop()
-    let src = base + "/samples/" + sample
-    console.log(robotType, src)
+    robotType = sample.split(".").pop();
+    let src = base + "/samples/" + sample;
+    console.log(robotType, src);
     let bot: string;
     return fetch(src)
       .then((data) => {
@@ -321,28 +321,35 @@
       </div>
       <div class="row">
         <div class="column column-left column-offset">
-          <label for="mybot">{ $ow ? "Your" : "Cyan"} Fighter</label>
-          <select bind:value={myBot} id="enemy">
-            {#if myBots.length == 0}
+          {#if $ow === undefined}
+            <label for="mybot">Cyan Fighter</label>
+            <select bind:value={myBot} id="enemy">
               {#each filteredCyanBots as enemy}
                 <option value={enemy.url}>{enemy.name}</option>
               {/each}
+            </select>
+          {:else}
+            <label for="mybot">Your Fighter</label>
+            {#if myBots.length == 0}
+              <p>No fighters yet. Please create one.</p>
             {:else}
-              {#each filteredMyBots as bot}
-                <option value={bot}
-                  >{bot.split(".")[0]}{$rewards > 0
-                    ? " (+" + $rewards + ")"
-                    : ""}</option
-                >
-              {/each}
+              <select bind:value={myBot} id="enemy">
+                {#each filteredMyBots as bot}
+                  <option value={bot}
+                    >{bot.split(".")[0]}{$rewards > 0
+                      ? " (+" + $rewards + ")"
+                      : ""}</option
+                  >
+                {/each}
+              </select>
             {/if}
-          </select>
+          {/if}
           <label
-          >Filter Cyan: <input
-            bind:value={searchCyanBot}
-            on:input={updateSelectList}
-          /></label
-        >
+            >Filter Cyan: <input
+              bind:value={searchCyanBot}
+              on:input={updateSelectList}
+            /></label
+          >
         </div>
         <div class="column column-right">
           <label for="enemy">{$ow ? "Enemy" : "Red"} Fighter</label>
@@ -400,7 +407,7 @@
             <h4>
               Welcome to
               <b>Sky Battle</b>
-              v{VERSION} 
+              v{VERSION}
               <a target="_blank" href="license.html">(read license)</a>.
             </h4>
           </div>
@@ -420,14 +427,12 @@
           </div>
         </div>
         <div class="row">
-          <div class="column column-left column-offset">
-            
-          </div>
+          <div class="column column-left column-offset" />
           <div class="column column-right">
             <label for="template">Pick a template:</label>
             <select id="template" bind:value={sample}>
               {#each samples as item}
-                <option value="{item}">{item}</option>
+                <option value={item}>{item}</option>
               {/each}
             </select>
           </div>

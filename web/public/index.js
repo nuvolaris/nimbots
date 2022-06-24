@@ -30,13 +30,13 @@ function replaceBase(path, body) {
         return body
     // calculate toReplace    
     let a = process.env['__OW_ACTION_NAME'].split("/")
-    if(a.length == 3)
-      a.splice(-1, 0, "default")
+    if(a.length == 3) a.splice(-1, 0, "default")
     let toReplace = a.join("/");
     // replace all
     let toFind = '/nuvolaris/default/skybattle'
-    while(body.indexOf(toFind) != -1)
-        body = body.replace(toFind, toReplace)
+    if(toFind!=toReplace)
+        while(body.indexOf(toFind) != -1)
+            body = body.replace(toFind, toReplace)
     return body
 }
 

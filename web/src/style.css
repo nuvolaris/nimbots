@@ -47,8 +47,6 @@ button {
        url('./font/noto-sans-v27-latin-regular.svg#NotoSans') format('svg'); /* Legacy iOS */
 }
 
-
-
 h1 {
   font-family: "Kdam Thmor Pro";
   color: rgb(16, 163, 212);
@@ -72,7 +70,7 @@ canvas {
   width: 100%;
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 800px) {
   .container {
     padding: 0 2px;
   }

@@ -44,12 +44,7 @@
   let samples = [
     "JsBot.js",
     "GoBot.go",
-    "PyBot.py",
-    "BackAndForth.js",
-    "LookAndShot.js",
-    "LookAround.js",
-    "RandomTurn.js",
-    "Terminator.js",
+    "PyBot.py"
   ];
   let sample = samples[0];
   let regex = /^\w{1,60}$/g;

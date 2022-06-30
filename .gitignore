@@ -8,3 +8,5 @@ rumble/
 attic/
 *.old
 out.txt
+*.tar.gz
+*.zip

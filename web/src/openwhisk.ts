@@ -68,6 +68,9 @@ export class OpenWhisk {
         let actions = await this.call("actions") as object[]
         //console.log(actions)
         for (let action of actions) {
+            console.log(action)
+            if(action["namespace"].indexOf("/")!=-1)
+                continue
             for (let ann of action["annotations"] as object[]) {
                 if (ann["key"] == "nimbot") {
                     res.push(action["name"] + "." + ann["value"])

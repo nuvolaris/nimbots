@@ -1,12 +1,11 @@
 <script lang="ts">
   import { OpenWhisk } from "./openwhisk";
-  import { URL_BASE, VERSION } from "./const";
+  import { VERSION } from "./const";
   import { BattleWeb } from "./battleweb";
   import { AssetsLoader } from "./util";
   import { onMount, afterUpdate, onDestroy } from "svelte";
   import { inspector, source, rewards, ow } from "./store";
   import { log } from "./robot";
-  import { rumblePublic } from "./rumble";
 
   export let base: string;
   export let apihost: string;
@@ -41,11 +40,7 @@
   let filteredRedBots = redBots;
   let canStartBattle = true;
 
-  let samples = [
-    "JsBot.js",
-    "GoBot.go",
-    "PyBot.py"
-  ];
+  let samples = ["JsBot.js", "GoBot.go", "PyBot.py"];
   let sample = samples[0];
   let regex = /^\w{1,60}$/g;
 
@@ -119,13 +114,8 @@
   }
 
   async function updateBots() {
-    enemyBots = await rumblePublic();
-    for (let i = 0; i < enemyBots.length; i++) {
-      let bot = enemyBots[i];
-      enemyBots[i].url = bot.url + ":" + bot.rewards;
-      enemyBots[i].name =
-        bot.name + (bot.rewards > 0 ? " (+" + bot.rewards + ")" : "");
-    }
+    let res = await fetch(base + "/robots").then((j) => j.json());
+    enemyBots = res;
     cyanBots = Object.assign([], enemyBots);
     cyanBots.sort(() => 0.5 - Math.random());
     redBots = Object.assign([], enemyBots);
@@ -238,17 +228,16 @@
 
     let champ =
       myBots.length == 0
-        ? myBot.split(":")[0]
+        ? myBot
         : $ow.namespace + "/default/" + myBot.split(".")[0];
 
-    let champExtra =
-      myBots.length == 0 ? parseInt(myBot.split(":")[1]) : $rewards;
+    let champExtraLives = 0
 
-    let enemy = enemyBot.split(":")[0];
-    let enemyExtra = parseInt(enemyBot.split(":")[1]);
+    let enemy = enemyBot;
+    let enemyExtraLives = 0;
 
-    let prefix = $ow === undefined ? URL_BASE : apihost + "/api/v1/web/";
-    let urls = [prefix + champ, URL_BASE + enemy];
+    let prefix = apihost + "/api/v1/web/";
+    let urls = [prefix + champ, prefix + enemy];
 
     let canvas = document.getElementById("arena") as HTMLCanvasElement;
 
@@ -257,11 +246,11 @@
       [Math.random() * 360, Math.random() * 360],
     ];
 
-    let startLives = [champExtra, enemyExtra];
+    let startLives = [champExtraLives, enemyExtraLives];
 
     battle.webinit(canvas.getContext("2d"), urls, startAngles, startLives);
     ready = true;
-    msg = "May the best fighter win the battle!";
+    msg = "May the best win!";
     status = "Fighting!";
     fighting = true;
     battle.draw();

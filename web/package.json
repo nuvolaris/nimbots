@@ -6,7 +6,8 @@
     "dev": "rollup -c -w",
     "start": "sirv public",
     "start2": "sirv public -H 192.168.0.68",
-    "validate": "svelte-check"
+    "validate": "svelte-check",
+    "manifest": "node indexer.js >../skybattle-robots/manifest.yaml"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "codemirror": "^5.65.6",
+    "glob": "^8.0.3",
     "milligram": "^1.4.1",
     "modernizr": "^3.11.4",
     "normalize": "^0.3.1",

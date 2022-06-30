@@ -43,6 +43,7 @@ function replaceBase(path, body) {
 function body(path) {
     let file = `${__dirname}${path}`
     if (!fs.existsSync(file)) {
+        console.log("cannot find "+file)
         return {
             body: "<h1>504 not found</h1>",
             statusCode: 504
@@ -64,29 +65,63 @@ function body(path) {
 }
 
 function check(args) {
-    let res = { "ok": true }
+    let res = ""
     if (!("__ow_path" in args)) {
-        res = { "error": "not deployed as --web=raw" }
+        res = "<h1>Error: not deployed as <tt>--web=true</tt></h1>"
     }
     else if (!("__OW_API_KEY" in process.env)) {
-        res = { "error": "not deployed with -a provide-api-key true " }
+        res = "<h1>Error: not deployed with <tt>-a provide-api-key true</tt>.</h1>"
     }
-    else if (!("secret" in args)) {
-        res = { "error": "not deployed with -p secret <password>" }
+    else if (!("secret" in args) || args.secret == "") {
+        res = "<h1>Error: please set password with <tt>nuv a update -p secret your-password</tt>"
     }
     return res
 }
 
+
+const openwhisk = require("openwhisk")
+
+function isNimbot(a) {
+    for(let kv of a.annotations) {
+        //console.log(kv)
+        if(kv.key == "nimbot")
+            return true
+    }
+    return false
+}
+
+function filter(r) {
+    let res = []
+    for(let a of r) {
+        console.log(a)
+        if(! isNimbot(a))
+            continue
+        let namespace = a.namespace 
+        let package = namespace.split("/")
+        if(package.length <2)
+          continue
+
+        let name = `${package[1]}/${a.name}`
+        let url = `${namespace}/${a.name}`
+        let rec = {
+            name: name,
+            url: url
+        }
+        res.push(rec)
+    }
+    return res
+}
+ 
 function main(args) {
     // check parametes
     res = check(args)
-    if ("error" in res) {
+    if (res!="") {
         return { "body": res }
     }
     let path = args['__ow_path'];
     // echo - disabled - for debug only 
     // do not leave enabled as leaks api keys
-    /**/
+    /*
     if (path == "/echo") {
         return {
             "body": {
@@ -95,6 +130,11 @@ function main(args) {
             }
         }
     }/**/
+    if(path == "/robots") {
+        let ow = openwhisk()
+        return ow.actions.list()
+        .then(r => ({body: filter(r)}))
+    }
     // check login
     if (path == "/login") {
         res = { "error": "wrong password" }

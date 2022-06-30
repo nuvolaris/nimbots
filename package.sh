@@ -16,7 +16,7 @@ do for ARC in amd64 arm64
 done
 wget -nc $PRE/$VER/nuv-$VER-windows-amd64.zip
 pushd skybattle-robots
-rm nuv
+rm -f nuv nuv.exe
 unzip ../nuv-$VER-windows-amd64.zip
 mv LICENSE LICENSE.nuv
 cp ../LICENSE.md LICENSE.skybattle
